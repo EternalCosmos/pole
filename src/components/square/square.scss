@@ -1,0 +1,10 @@
+.square_container {
+  width : 150px;
+  height: 150px;
+  border: 1px solid black;
+
+  &:hover {
+    background-color: mediumpurple !important;
+    cursor          : pointer;
+  }
+}
