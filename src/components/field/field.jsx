@@ -42,20 +42,23 @@ const Field = () => {
     return neighbours;
   };
 
-  const getAvailableSquares = (player) => {
+  const getPlayerField = (player) => {
     const playerField = [];
     for (const key in grid) {
       if (grid[key] === player) {
         playerField.push(key);
       }
     }
+    return playerField;
+  };
+
+  const getAvailableSquares = (player, square) => {
+    const playerField = square ? getPlayerField(square) : getPlayerField(player);
     const availableSquares = [];
     playerField.forEach((square) => availableSquares.push(...getNeighbourSquares(square, player)));
     const uniqueAvailableSquares = [...new Set(availableSquares)];
     setActiveSquares(uniqueAvailableSquares);
   };
-
-  useEffect(() => {}, []);
 
   const generateGrid = (size) => {
     const matrix = [];
@@ -69,6 +72,27 @@ const Field = () => {
     }
     return matrix;
   };
+
+  useEffect(() => {
+    getAvailableSquares(activePlayer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const playerField = getPlayerField(activePlayer);
+    if (playerField.length > 0) return;
+    const emptySquares = [];
+    for (const key in grid) {
+      if (grid[key] === 'default') {
+        emptySquares.push(key);
+      }
+    }
+    const newIndex = Math.floor(Math.random() * emptySquares.length);
+    const newActivePlayerSquare = emptySquares[newIndex];
+    setGrid({ ...grid, [newActivePlayerSquare]: activePlayer });
+    setActiveSquares(getNeighbourSquares(newActivePlayerSquare));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePlayer]);
 
   return (
     <>
