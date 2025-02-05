@@ -3,8 +3,11 @@
   height: 150px;
   border: 1px solid black;
 
-  &:hover {
+  &.active {
     background-color: mediumpurple !important;
-    cursor          : pointer;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 }

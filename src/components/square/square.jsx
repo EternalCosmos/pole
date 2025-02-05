@@ -1,14 +1,17 @@
-import { COLORS } from '@/constants';
+import clsx from 'clsx';
+import { PLAYERS } from '../../constants';
 import './square.scss';
 
-const Square = ({ cords, color, onClick }) => {
+const Square = ({ activeSquares, cords, player, onClick }) => {
   return (
     <div
-      className='square_container'
+      className={clsx('square_container', activeSquares.includes(cords) && 'active')}
       data-cords={cords}
-      onClick={() => onClick(cords, color)}
-      style={{ backgroundColor: COLORS[color] }}
-    ></div>
+      onClick={() => onClick(cords, player)}
+      style={{ backgroundColor: PLAYERS[player] }}
+    >
+      {cords}
+    </div>
   );
 };
 
