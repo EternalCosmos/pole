@@ -3,11 +3,29 @@
   height: 150px;
   border: 1px solid black;
 
+  &.Fima {
+    box-shadow: inset 0px 0px 15px #FFD700, inset 0px 0px 30px #FFD700;
+  }
+
+  &.Tema {
+    box-shadow: inset 0px 0px 15px #39FF14, inset 0px 0px 30px #39FF14;
+  }
+
+  &.Anya {
+    box-shadow: inset 0px 0px 15px #007BFF, inset 0px 0px 30px #007BFF;
+  }
+
+  &.Kris {
+    box-shadow: inset 0px 0px 15px #FF00FF, inset 0px 0px 30px #FF00FF;
+  }
+
   &.active {
-    background-color: mediumpurple !important;
+    box-shadow  : inset 0px 0px 15px #00ffff, inset 0px 0px 15px #00ffff;
+    border-color: #00ffff;
 
     &:hover {
-      cursor: pointer;
+      border-color: white;
+      cursor      : pointer;
     }
   }
 }

@@ -6,28 +6,28 @@ export const INITIAL_STATE = {
   '0,4': 'default',
   '0,5': 'default',
   '1,0': 'default',
-  '1,1': 'Fima',
+  '1,1': 'default',
   '1,2': 'default',
   '1,3': 'default',
-  '1,4': 'Kris',
+  '1,4': 'default',
   '1,5': 'default',
   '2,0': 'default',
   '2,1': 'default',
-  '2,2': 'default',
-  '2,3': 'default',
+  '2,2': 'Fima',
+  '2,3': 'Kris',
   '2,4': 'default',
   '2,5': 'default',
   '3,0': 'default',
   '3,1': 'default',
-  '3,2': 'default',
-  '3,3': 'default',
+  '3,2': 'Anya',
+  '3,3': 'Tema',
   '3,4': 'default',
   '3,5': 'default',
   '4,0': 'default',
-  '4,1': 'Anya',
+  '4,1': 'default',
   '4,2': 'default',
   '4,3': 'default',
-  '4,4': 'Tema',
+  '4,4': 'default',
   '4,5': 'default',
   '5,0': 'default',
   '5,1': 'default',
@@ -38,16 +38,13 @@ export const INITIAL_STATE = {
 };
 
 export const COLORS = {
-  default: 'mediumslateblue',
-  red: 'red',
-  green: 'green',
+  Fima: 'rgba(255, 215, 0, 0.55)',
+  Tema: 'rgba(57, 255, 20, 0.55)',
+  Anya: 'rgba(0, 123, 255, 0.55)',
+  Kris: 'rgba(255, 0, 255, 0.55)',
+  default: '#003366',
 };
 
-export const PLAYERS = {
-  Fima: 'red',
-  Tema: 'green',
-  Anya: 'blue',
-  Kris: 'violet',
-  default: 'mediumslateblue',
-  active: 'mediumpurple',
-};
+export const PLAYERS = ['Fima', 'Tema', 'Anya', 'Kris'];
+
+export const THEMES = ['Десерти', 'Меблі'];
