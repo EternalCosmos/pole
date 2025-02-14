@@ -1,21 +1,21 @@
 .square_container {
-  width : 150px;
-  height: 150px;
+  width : 130px;
+  height: 130px;
   border: 1px solid black;
 
   &.Fima {
     box-shadow: inset 0px 0px 15px #FFD700, inset 0px 0px 30px #FFD700;
   }
 
-  &.Tema {
+  &.Kris {
     box-shadow: inset 0px 0px 15px #39FF14, inset 0px 0px 30px #39FF14;
   }
 
-  &.Anya {
+  &.Tema {
     box-shadow: inset 0px 0px 15px #007BFF, inset 0px 0px 30px #007BFF;
   }
 
-  &.Kris {
+  &.Anya {
     box-shadow: inset 0px 0px 15px #FF00FF, inset 0px 0px 30px #FF00FF;
   }
 

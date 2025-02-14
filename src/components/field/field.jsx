@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { INITIAL_STATE, PLAYERS, THEMES } from '@/constants.js';
+import { INITIAL_STATE, PLAYERS, THEMES, THEME_NAMES } from '@/constants.js';
 import Square from '@/components/square/square';
 import GameModal from '@/components/modal/modal';
 
 import './field.scss';
+import clsx from 'clsx';
 
 const Field = () => {
   const size = 6;
@@ -12,31 +13,27 @@ const Field = () => {
   const [grid, setGrid] = useState(INITIAL_STATE);
   const [activeSquares, setActiveSquares] = useState([]);
   const [clickedPlayer, setClickedPlayer] = useState();
-  const [roundStart, setRoundStart] = useState(false);
   const [playerSelection, setPlayerSelection] = useState(false);
-
-  const shuffleArray = (array) => {
-    const shuffled = [...array]; // Copy to avoid mutating the original array
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
-    }
-    return shuffled;
-  };
-  const themes = shuffleArray(THEMES);
+  const [themeMap, setThemeMap] = useState(THEMES);
+  const [playerThemes, setPlayerThemes] = useState({
+    Fima: 'potatoes',
+    Tema: 'sport',
+    Kris: 'cheese',
+    Anya: 'birthday',
+  });
+  const [activePlayers, setActivePlayers] = useState(PLAYERS);
 
   const getRandomIndex = (limit) => {
     return Math.floor(Math.random() * limit);
   };
 
   const getActivePlayers = (playerToExclude) => {
-    return PLAYERS.filter((player) => player !== playerToExclude);
+    return activePlayers.filter((player) => player !== playerToExclude);
   };
 
   const getNewPlayer = () => {
-    const availablePlayers = getActivePlayers();
-    const newIndex = getRandomIndex(availablePlayers.length);
-    return availablePlayers[newIndex];
+    const newIndex = getRandomIndex(activePlayers.length);
+    return activePlayers[newIndex];
   };
 
   const absorbField = (gridClone, loser, winner) => {
@@ -49,41 +46,55 @@ const Field = () => {
 
   const getSquareForAbsorbedPlayer = (gridClone, clickedPlayer) => {
     const activePlayers = getActivePlayers(clickedPlayer);
-    const lostPlayerAvailableSquares = getAvailableSquares(activePlayers).filter(
-      (square) => grid[square] === 'default'
+    const lostPlayerAvailableSquares = getAvailableSquares(activePlayers, gridClone).filter(
+      (square) => gridClone[square] === 'default'
     );
-    const newIndex = getRandomIndex(lostPlayerAvailableSquares.length);
-    gridClone[lostPlayerAvailableSquares[newIndex]] = clickedPlayer;
+    if (!lostPlayerAvailableSquares.length) {
+      setActivePlayers(getActivePlayers(clickedPlayer));
+    } else {
+      const newIndex = getRandomIndex(lostPlayerAvailableSquares.length);
+      gridClone[lostPlayerAvailableSquares[newIndex]] = clickedPlayer;
+    }
   };
 
-  const onSelectSquare = (cords, clickedPlayer) => {
-    if (clickedPlayer === activePlayer) return;
+  const getThemeForAbsorbedPlayer = (player) => {
+    const themeMapClone = structuredClone(themeMap);
+    const availableThemes = Object.keys(themeMapClone).filter((theme) => !themeMapClone[theme]);
+    const newIndex = getRandomIndex(availableThemes.length);
+    const newTheme = availableThemes[newIndex];
+    themeMapClone[newTheme] = true;
+    setPlayerThemes({ ...playerThemes, [player]: newTheme });
+    setThemeMap(themeMapClone);
+  };
+
+  const onSelectSquare = (cords, player) => {
+    if (player === activePlayer) return;
     if (!activeSquares.includes(cords)) return;
     if (grid[cords] === 'default') return;
 
-    setClickedPlayer(clickedPlayer);
+    setClickedPlayer(player);
     setIsModalOpen(true);
-    setRoundStart(true);
   };
 
   const onWin = () => {
-    setRoundStart(false);
     const newGrid = structuredClone(grid);
     absorbField(newGrid, clickedPlayer, activePlayer);
     getSquareForAbsorbedPlayer(newGrid, clickedPlayer);
+    getThemeForAbsorbedPlayer(clickedPlayer);
     setGrid(newGrid);
     setActiveSquares([]);
     setPlayerSelection(true);
   };
 
   const onLose = () => {
-    setRoundStart(false);
     const newGrid = structuredClone(grid);
     absorbField(newGrid, activePlayer, clickedPlayer);
     getSquareForAbsorbedPlayer(newGrid, activePlayer);
+    getThemeForAbsorbedPlayer(activePlayer);
     setGrid(newGrid);
     setActiveSquares([]);
     setActivePlayer(clickedPlayer);
+    setClickedPlayer();
     setPlayerSelection(true);
   };
 
@@ -111,21 +122,21 @@ const Field = () => {
     return neighbours;
   };
 
-  const getPlayerField = (player) => {
+  const getPlayerField = (player, gridClone) => {
     const playerField = [];
-    for (const key in grid) {
-      if (grid[key] === player) {
+    for (const key in gridClone) {
+      if (gridClone[key] === player) {
         playerField.push(key);
       }
     }
     return playerField;
   };
 
-  const getAvailableSquares = (players, squareCords) => {
+  const getAvailableSquares = (players, gridClone = grid) => {
     const availableSquares = [];
     const playerList = Array.isArray(players) ? players : [players];
     playerList.forEach((player) => {
-      const playerField = squareCords ? getPlayerField(squareCords) : getPlayerField(player);
+      const playerField = getPlayerField(player, gridClone);
       playerField.forEach((square) => {
         availableSquares.push(...getNeighbourSquares(square, player));
       });
@@ -167,21 +178,47 @@ const Field = () => {
 
   return (
     <>
-      <GameModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} player1={activePlayer} player2={clickedPlayer} />
+      {clickedPlayer && (
+        <GameModal
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          player1={activePlayer}
+          player2={clickedPlayer}
+          onWin={onWin}
+          onLose={onLose}
+          theme={playerThemes[clickedPlayer]}
+        />
+      )}
       <div>
-        <div className='active_player'>Active player: {activePlayer}</div>
-        {roundStart && (
+        <div className='legend_container'>
           <div>
-            <button onClick={onWin}>Win</button>
-            <button onClick={onLose}>Lose</button>
+            <div className='player'>
+              <span className={clsx('player_name', activePlayers.includes('Anya') && 'active')}>Anya:</span>
+              <div className='color_block anya'>{THEME_NAMES[playerThemes.Anya]}</div>
+            </div>
+            <div className='player'>
+              <span className={clsx('player_name', activePlayers.includes('Tema') && 'active')}>Tema:</span>
+              <div className='color_block tema'>{THEME_NAMES[playerThemes.Tema]}</div>
+            </div>
+            <div className='player'>
+              <span className={clsx('player_name', activePlayers.includes('Fima') && 'active')}>Fima:</span>
+              <div className='color_block fima'>{THEME_NAMES[playerThemes.Fima]}</div>
+            </div>
+            <div className='player'>
+              <span className={clsx('player_name', activePlayers.includes('Kris') && 'active')}>Kris:</span>
+              <div className='color_block kris'>{THEME_NAMES[playerThemes.Kris]}</div>
+            </div>
           </div>
-        )}
-        {playerSelection && (
-          <div>
-            <button onClick={onNextPlayer}>Next Player</button>
-            <button onClick={onGoOn}>Go On!</button>
+          <div>Active Player: {activePlayer}</div>
+          <div className={clsx('control_container', playerSelection && 'visible')}>
+            <button className='control_btn' onClick={onNextPlayer}>
+              Next Player
+            </button>
+            <button className='control_btn' onClick={onGoOn}>
+              Go On!
+            </button>
           </div>
-        )}
+        </div>
       </div>
       <div className='field_container'>{generateGrid(size)}</div>
     </>

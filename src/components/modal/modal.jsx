@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Modal from 'react-modal';
 import clsx from 'clsx';
 
+import { THEME_URIS } from '../../constants';
+import { shuffleArray } from '../../utils';
+
 import './modal.scss';
 
-const GameModal = ({ isOpen, setIsOpen, player1, player2 }) => {
-  const time = 30;
+const GameModal = ({ isOpen, setIsOpen, player1, player2, onWin, onLose, theme }) => {
+  const time = 2;
   const [index, setIndex] = useState(0);
   const [showImage, setShowImage] = useState(false);
   const [timer1, setTimer1] = useState(time);
@@ -15,8 +18,9 @@ const GameModal = ({ isOpen, setIsOpen, player1, player2 }) => {
   const [showControls, setShowControls] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
 
-  const sorces = import.meta.glob('/src/assets/potatoes/*.*');
-  const images = Object.values(sorces).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  // const sources = import.meta.glob(THEME_URIS[theme]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const images = useMemo(() => shuffleArray(THEME_URIS[theme]), [player1, player2]);
 
   const onNext = () => {
     const newIndex = index + 1;
@@ -45,6 +49,7 @@ const GameModal = ({ isOpen, setIsOpen, player1, player2 }) => {
   const onClose = () => {
     reset();
     setIsOpen(false);
+    winner === player1 ? onWin() : onLose();
   };
 
   const onCorrect = () => {
@@ -102,8 +107,8 @@ const GameModal = ({ isOpen, setIsOpen, player1, player2 }) => {
         )}
         {showImage && (
           <div className='image_container'>
-            <img key={index} src={images[index].name} />
-            <p className={clsx('answer', showAnswer && 'visible')}>{getTextBetweenDots(images[index].name)}</p>
+            <img key={index} src={images[index]} />
+            <p className={clsx('answer', showAnswer && 'visible')}>{getTextBetweenDots(images[index])}</p>
           </div>
         )}
         {winner && <p>{winner} Won!</p>}

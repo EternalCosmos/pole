@@ -3,3 +3,168 @@
   align-items    : center;
   justify-content: center;
 }
+
+.legend_container {
+  border-radius  : 10px;
+  border         : 2px solid #ffffff;
+  padding        : 15px;
+  display        : flex;
+  align-items    : center;
+  justify-content: space-between;
+  margin-bottom  : 20px;
+
+  .player {
+    display           : flex;
+    align-items       : center;
+    // width          : 110px;
+    justify-content   : space-between;
+
+    &:not(:last-of-type) {
+      margin-bottom: 10px;
+    }
+
+    .player_name {
+      display: inline-flex;
+      width  : 65px;
+      color  : black;
+
+      &.active {
+        color: #ffffff;
+      }
+    }
+
+    .color_block {
+      width      : 100%;
+      height     : 25px;
+      padding    : 0px 5px;
+      box-sizing : border-box;
+      text-align : center;
+      margin-left: 10px;
+
+      &.anya {
+        background-color: rgba(255, 0, 255, 0.55);
+      }
+
+      &.tema {
+        background-color: rgba(0, 123, 255, 0.55);
+      }
+
+      &.kris {
+        background-color: rgba(57, 255, 20, 0.55);
+      }
+
+      &.fima {
+        background-color: rgba(255, 215, 0, 0.55);
+      }
+    }
+  }
+
+  .control_container {
+    opacity    : 0;
+    visibility : hidden;
+    display    : flex;
+    align-items: center;
+    gap        : 10px;
+
+    &.visible {
+      opacity   : 1;
+      visibility: visible;
+    }
+
+    .control_btn {
+      color        : #fff;
+      height       : 40px;
+      padding      : 10px 15px;
+      font-weight  : 500;
+      background   : transparent;
+      cursor       : pointer;
+      transition   : all 0.3s ease;
+      position     : relative;
+      display      : inline-block;
+      border-radius: 5px;
+
+      & {
+        background: rgba(255, 0, 255, 0.55);
+        border    : none;
+        box-shadow: 0 0 5px rgba(255, 0, 255, 0.55);
+      }
+
+      &:span {
+        position: relative;
+        display : block;
+        width   : 100%;
+        height  : 100%;
+      }
+
+      &:hover {
+        background: transparent;
+      }
+
+      &:before,
+      &:after {
+        position  : absolute;
+        content   : "";
+        height    : 0%;
+        width     : 2px;
+        background: rgba(255, 0, 255, 0.55);
+        box-shadow: 0 0 5px rgba(255, 0, 255, 0.55);
+      }
+
+      &:before {
+        right     : 0;
+        top       : 0;
+        transition: all 500ms ease;
+      }
+
+      &:after {
+        left      : 0;
+        bottom    : 0;
+        transition: all 500ms ease;
+      }
+
+      &:hover:before {
+        transition: all 500ms ease;
+        height    : 100%;
+      }
+
+      &:hover:after {
+        transition: all 500ms ease;
+        height    : 100%;
+      }
+
+      &span:before,
+      &span:after {
+        position  : absolute;
+        content   : "";
+        background: rgba(255, 0, 255, 0.55);
+        box-shadow: 0 0 5px rgba(255, 0, 255, 0.55);
+      }
+
+      &span:before {
+        left      : 0;
+        top       : 0;
+        width     : 0%;
+        height    : 2px;
+        transition: all 500ms ease;
+      }
+
+      &span:after {
+        right     : 0;
+        bottom    : 0;
+        width     : 0%;
+        height    : 2px;
+        transition: all 500ms ease;
+      }
+
+      &span:hover:before {
+        width: 100%;
+      }
+
+      &span:hover:after {
+        width: 100%;
+      }
+    }
+  }
+
+
+}
